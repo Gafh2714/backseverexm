@@ -1,9 +1,20 @@
 // Requires
 var express = require('express');
 var moongus = require('mongoose');
+var bodyParser = require('body-parser');
 
 // Inicializar Variables
 var app = express();
+
+//body parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+//Importar Rutas
+var appRoute = require('./routes/app');
+var UsuariosRoute = require('./routes/usuario');
+var LoginRoute = require('./routes/login');
 
 // Conexiómn a la bse de datos
 moongus.connection.openUri('mongodb://localhost:27017/Hospitaldb', (error, res) => {
@@ -13,12 +24,10 @@ moongus.connection.openUri('mongodb://localhost:27017/Hospitaldb', (error, res) 
 });
 
 //Rutas
-app.get('/', (req, res, next) => {
-    res.status(200).json({
-        valido: true,
-        mensaje: 'Peticion Realizada Correctamente'
-    })
-});
+app.use('/usuario', UsuariosRoute);
+app.use('/login', LoginRoute);
+app.use('/', appRoute);
+
 
 // Ecuchar Peticiones
 
